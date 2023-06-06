@@ -1,3 +1,65 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  --color-gray-100: #f4f3f1;
+  --color-gray-200: #dddbd8;
+  --color-gray-300: #ccc9c6;
+  --color-gray-400: #aeaba7;
+  --color-gray-500: #8a8784;
+  --color-gray-600: #656360;
+  --color-gray-700: #4b4a47;
+  --color-gray-800: #31302e;
+  --color-gray-900: #1f1d1b;
+
+  --color-orange-100: #fcf3e1;
+  --color-orange-200: #fceccd;
+  --color-orange-300: #fae1af;
+  --color-orange-400: #fbd997;
+  --color-orange-500: #ffd37c;
+  --color-orange-600: #f9c762;
+  --color-orange-700: #fbc14d;
+  --color-orange-800: #fab833;
+  --color-orange-900: #f6ad1b;
+
+  --color-red-100: hwb(0 95% 0%);
+  --color-red-200: hwb(0 85% 0%);
+  --color-red-300: hwb(0 75% 0%);
+  --color-red-400: hwb(0 65% 0%);
+  --color-red-500: hwb(0 55% 0%);
+  --color-red-600: hwb(0 45% 0%);
+  --color-red-700: hwb(0 35% 0%);
+  --color-red-800: hwb(0 25% 0%);
+  --color-red-900: hwb(0 15% 0%);
+
+  --color-blue-100: hwb(240 95% 0%);
+  --color-blue-200: hwb(240 85% 0%);
+  --color-blue-300: hwb(240 75% 0%);
+  --color-blue-400: hwb(240 65% 0%);
+  --color-blue-500: hwb(240 55% 0%);
+  --color-blue-600: hwb(240 45% 0%);
+  --color-blue-700: hwb(240 35% 0%);
+  --color-blue-800: hwb(240 25% 0%);
+  --color-blue-900: hwb(240 15% 0%);
+  --color-blue-dark: hsl(240, 100%, 40%);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +72,145 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+ul {
+  padding: 0;
+}
+
+main {
+  margin: 2rem auto;
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* li {
+  list-style-type: none;
+} */
+
+.app {
+  width: 22rem;
+  min-width: 22rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: white;
+  margin: 3rem auto;
+}
+
+.app h1 {
+  color: black;
+  text-align: left;
+  margin-bottom: 3rem;
+}
+
+.app .form-control {
+  margin-bottom: 1rem;
+}
+
+.app .form-control input {
+  display: block;
+  background-color: transparent;
+  color: black;
+}
+
+.app .form-control input,
+.app .form-control select {
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-300);
+  width: 20rem;
+  max-width: 100%;
+}
+
+.app .form-control input:focus {
+  outline: none;
+  border-color: var(--color-gray-300);
+  background-color: var(--color-blue-100);
+}
+
+.app .control-group {
+  display: flex;
+  column-gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.app .control-group .form-control {
+  min-width: 15rem;
+  flex: 1;
+}
+
+button{
+  width: 100%;
+  font: inherit;
+  color: black;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-300);
+  cursor: pointer;
+}
+
+button.btn-small{
+  width: inherit;
+}
+
+button.btn-white{
+  background-color: transparent;
+}
+
+button.btn-submit {
+  background-color: var(--color-blue-900);
+  border: 1px solid var(--color-blue-900);
+  color: white;
+}
+
+button.btn-white:hover,
+button.btn-white:active {
+  background-color: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+}
+
+button.btn-submit:hover,
+button.btn-submit:active {
+  background-color: var(--color-blue-dark);
+  border-color: var(--color-blue-dark);
+}
+
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+  background-color: #ccc;
+  color: var(--color-gray-900);
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+.app .form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.app .invalid input {
+  border: 1px solid var(--color-red-300);
+  background-color: var(--color-red-100);
+}
+
+.app .invalid input:focus {
+  border-color: var(--color-gray-300);
+  background-color: var(--color-blue-100);
+}
+
+.app .error-text {
+  color: var(--color-red-900);
+  font-size: small;
+  text-align: left;
+  margin-top: 0;
 }

@@ -1,0 +1,36 @@
+.width-rem-35 {
+    min-width: 30rem;
+}
+
+.todo-list {
+    text-align: left;
+    color: black;
+}
+
+li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+label{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    cursor: pointer;
+    border: 1px solid var(--color-gray-500);
+    border-radius: 4px;
+    width: 16px;
+    height: 16px;
+}
+
+input[type="checkbox"]:checked {
+    appearance: auto;
+}
