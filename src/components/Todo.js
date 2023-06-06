@@ -32,18 +32,8 @@ const Todo = (props) => {
 
             const responseData = await response.json();
 
-            const loadedTodoList = [];
-            for (const key in responseData) {
-                loadedTodoList.push({
-                    id: key,
-                    todo: responseData[key].todo,
-                    isCompleted: responseData[key].isCompleted,
-                    userId: responseData[key].userId
-                });
-            }
-
             setIsLoading(false);
-            setTodoList(loadedTodoList);
+            setTodoList(responseData);
         };
 
         fetchTodoList().catch((error) => {
@@ -106,17 +96,17 @@ const Todo = (props) => {
         // }
     };
 
-    const removeItemHandler = async (event) => {
-        // todoCtx.removeItem(id);
-        const id = event.target.id;
-        const request = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
+    const removeItemHandler = async (id) => {
+        console.log(id);
+        
+        const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + demo_access_token
             },
         });
 
-        if (request.ok) {
+        if (result.ok) {
             console.log("삭제 성공");
             getTodoListData();
         } else {
@@ -155,7 +145,7 @@ const Todo = (props) => {
                 </label>
                 <div>
                     <StyledButton data-testid="modify-button" onClick={editItemHandler}>수정</StyledButton>
-                    <StyledButton data-testid="delete-button" onClick={removeItemHandler} id={item.id}>삭제</StyledButton>
+                    <StyledButton data-testid="delete-button" onClick={()=> removeItemHandler(item.id)} >삭제</StyledButton>
                 </div>
                 {/* 
                 <input data-testid="modify-input" />
