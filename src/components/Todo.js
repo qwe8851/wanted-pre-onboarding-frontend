@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 import classes from './Todo.module.css';
-// import TodoContext from '../store/todo-context';
 
 const StyledButton = styled.button`
     width: auto;
@@ -11,10 +10,9 @@ const StyledButton = styled.button`
 `;
 
 const Todo = (props) => {
-    // const [isSubmitting, setIsSubmitting] = useState(false);
-    // const todoCtx = useContext(TodoContext);
     const [todoList, setTodoList] = useState([]);
     const demo_access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlQG5hdmVyLmNvbSIsInN1YiI6OTIwLCJpYXQiOjE2ODU5NzI0OTEsImV4cCI6MTY4NjU3NzI5MX0.jmAN8DPxXvl_5KBHqeyFPr73wVDVR1CghFAUn7mh7rE';
+    const addTodoInput = useRef();
 
     useEffect(() => {
         const getTodoListData = async () => {
@@ -41,8 +39,7 @@ const Todo = (props) => {
     }, []);
 
     const addItemHandler = async (item) => {
-        // todoCtx.addItem(item);
-
+        console.log(addTodoInput.current.value);
         const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
             method: 'POST',
             headers: {
@@ -50,7 +47,7 @@ const Todo = (props) => {
                 'Authorization': 'Bearer ' + demo_access_token
             },
             body: JSON.stringify({
-                "todo": "todo"
+                "todo": addTodoInput.current.value
             })
         });
 
@@ -68,8 +65,21 @@ const Todo = (props) => {
         // todoCtx.editItem(id);
     };
 
-    const removeItemHandler = (id) => {
+    const removeItemHandler = async (event) => {
         // todoCtx.removeItem(id);
+        const id = event.target.id;
+        const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + demo_access_token
+            },
+        });
+
+        if (result.ok) {
+            console.log("삭제 성공");
+        } else {
+            console.log("삭제 실패");
+        }
     };
 
     // const submitItemHandler = async(id) => {
@@ -88,9 +98,9 @@ const Todo = (props) => {
     return (
         <>
             <div className={`app ${classes['width-rem-35']}`}>
-                <h1>todo</h1>
+                <h1>Todo</h1>
                 <div className='form-control' style={{ display: 'flex', gap: '10px' }}>
-                    <input data-testid="new-todo-input" className='form-control' style={{ flex: "1" }} />
+                    <input data-testid="new-todo-input" className='form-control' style={{ flex: "1" }} ref={addTodoInput}/>
                     <button
                         data-testid="new-todo-add-button"
                         className='btn-small'
@@ -108,13 +118,14 @@ const Todo = (props) => {
                                         <span>{item.todo}</span>
                                     </label>
                                     <div>
-                                        <StyledButton onClick={editItemHandler}>수정</StyledButton>
-                                        <StyledButton onClick={removeItemHandler}>삭제</StyledButton>
+                                        <StyledButton data-testid="modify-button" onClick={editItemHandler}>수정</StyledButton>
+                                        <StyledButton data-testid="delete-button" onClick={removeItemHandler} id={item.id}>삭제</StyledButton>
                                     </div>
-                                    {/* <div>
-                                        <StyledButton onClick={submitItemHandler}>제출</StyledButton>
-                                        <StyledButton onClick={cancelItemHandler}>취소</StyledButton>
-                                    </div> */}
+                                    {/* 
+                                        <input data-testid="modify-input" />
+                                        <StyledButton data-testid="submit-button" onClick={submitItemHandler}>제출</StyledButton>
+                                        <StyledButton data-testid="cancel-button" onClick={submitItemHandler}>취소</StyledButton>
+                                     */}
                                 </li>
                             ))
                         }
