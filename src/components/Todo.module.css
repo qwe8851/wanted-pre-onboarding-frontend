@@ -7,17 +7,22 @@
     color: black;
 }
 
-li{
+li {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5px;
+    position: relative;
 }
 
-label{
+label {
     display: flex;
     gap: 5px;
     align-items: center;
+}
+
+label>span {
+    width: 19rem;
 }
 
 input[type="checkbox"] {
@@ -33,4 +38,15 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:checked {
     appearance: auto;
+}
+
+.form-control-sm {
+    position: absolute;
+    left: 30px;
+    width: 19rem;
+    padding: 4px;
+    background: transparent;
+    border: 1px solid var(--color-gray-300);
+    border-radius: 4px;
+    color: black;
 }

@@ -1,182 +1,202 @@
-import { useEffect, useRef, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
-import styled from 'styled-components';
-import classes from './Todo.module.css';
+// import classes from './Todo.module.css';
+// import styled from 'styled-components';
+// import useInput from './hooks/use-input';
 
-const StyledButton = styled.button`
-    width: auto;
-    padding: 1px 10px;
-    font-size: small;
-`;
+// const StyledButton = styled.button`
+//     width: auto;
+//     padding: 1px 10px;
+//     font-size: small;
+// `;
 
-const Todo = (props) => {
-    const demo_access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlQG5hdmVyLmNvbSIsInN1YiI6OTIwLCJpYXQiOjE2ODU5NzI0OTEsImV4cCI6MTY4NjU3NzI5MX0.jmAN8DPxXvl_5KBHqeyFPr73wVDVR1CghFAUn7mh7rE';
-    const [todoList, setTodoList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [httpError, setHttpError] = useState();
+// const BtnDiv = styled.div`
+//     width: 100px;
+//     display: flex;
+//     justify-content: space-between;
+//     position: absolute;
+//     right: 5px;
+//     top: 5px;
+// `;
 
-    const addTodoInput = useRef();
+// const Todo = (props) => {
+//     const demo_access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlQG5hdmVyLmNvbSIsInN1YiI6OTIwLCJpYXQiOjE2ODU5NzI0OTEsImV4cCI6MTY4NjU3NzI5MX0.jmAN8DPxXvl_5KBHqeyFPr73wVDVR1CghFAUn7mh7rE';
+//     const [todoList, setTodoList] = useState([]);
+//     const [isLoading, setIsLoading] = useState(true);
+//     const [httpError, setHttpError] = useState(false);
+//     const [isEdit, setIsEdit] = useState(false);
+//     const [modifyInputValue, setModifyInputValue] = useState('');
 
-    const getTodoListData = async () => {
-        const fetchTodoList = async () => {
-            const response = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + demo_access_token
-                }
-            });
+//     const {
+//         value: enteredAddInput,
+//         isValid: enteredAddInputIsValid,
+//         hasError: addInputHasError,
+//         valueChangeHandler: addInputChangeHandler,
+//         inputBlurHandler: addInputBlurHandler,
+//         reset: resetAddInputInput
+//     } = useInput(value => value.trim() !== '');
 
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
-            }
+//     const {
+//         value: enteredModifyInput,
+//         isValid: enteredModifyInputIsValid,
+//         hasError: modifyInputHasError,
+//         valueChangeHandler: modifyInputChangeHandler,
+//         inputBlurHandler: modifyInputBlurHandler,
+//     } = useInput((value) => value.trim() !== '');
 
-            const responseData = await response.json();
+//     const getTodoListData = async () => {
+//         const fetchTodoList = async () => {
+//             const response = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
+//                 method: 'GET',
+//                 headers: {
+//                     'Authorization': 'Bearer ' + demo_access_token
+//                 }
+//             });
 
-            setIsLoading(false);
-            setTodoList(responseData);
-        };
+//             if (!response.ok) {
+//                 throw new Error('Something went wrong!');
+//             }
 
-        fetchTodoList().catch((error) => {
-            console.log(error.message);
-            setIsLoading(false);
-            setHttpError('Something went wrong!');
-        });
-    }
+//             const responseData = await response.json();
 
-    useEffect(() => {
-        getTodoListData();
-    }, []);
+//             setIsLoading(false);
+//             setTodoList(responseData);
+//         };
 
-    const addItemHandler = async (item) => {
-        try {
-            const request = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + demo_access_token
-                },
-                body: JSON.stringify({
-                    "todo": addTodoInput.current.value
-                })
-            });
+//         fetchTodoList().catch((error) => {
+//             setIsLoading(false);
+//             setHttpError('Something went wrong!');
+//         });
+//     }
 
-            if (!request.ok) {
-                throw new Error('데이터를 추가하는데 실패하였습니다.');
-            }
+//     useEffect(() => {
+//         getTodoListData();
+//     }, []);
 
-            const data = await request.json();   // JSON 형태로 변환된 데이터를 받음
-            console.log(data);                  // 결과값 출력
+//     const addItemHandler = async () => {
+//         try {
+//             const request = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': 'Bearer ' + demo_access_token
+//                 },
+//                 body: JSON.stringify({
+//                     todo: enteredAddInput
+//                 })
+//             });
 
-            getTodoListData();
-        } catch (error) {
-            console.log(error);
-        }
-    };
+//             if (!request.ok) {
+//                 throw new Error('데이터를 추가하는데 실패하였습니다.');
+//             }
 
-    const editItemHandler = async (event) => {
-        // todoCtx.editItem(id);
+//             const data = await request.json();  // JSON 형태로 변환된 데이터를 받음
+//             console.log(data);                  // 결과값 출력
 
-        // const id = event.target.id;
-        // const request = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Authorization': 'Bearer ' + demo_access_token,
-        //         'Content-Type': 'application/json',
-        //     }, 
-        //     body: JSON.stringify({
-        //         todo: ,
-        //         isCompleted: 
-        //     })
-        // });
+//             resetAddInputInput();
+//             getTodoListData();
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     };
 
-        // if (request.ok) {
-        //     console.log("수정 성공");
-        // } else {
-        //     console.log("수정 실패");
-        // }
-    };
+//     const toggleEditItemHandler = (item) => {
+//         setIsEdit((prevState) => !prevState);
+//         setModifyInputValue(item.todo);
+//     };
 
-    const removeItemHandler = async (id) => {
-        console.log(id);
-        
-        const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': 'Bearer ' + demo_access_token
-            },
-        });
+//     const removeItemHandler = async (id) => {
+//         const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
+//             method: 'DELETE',
+//             headers: {
+//                 'Authorization': 'Bearer ' + demo_access_token
+//             },
+//         });
 
-        if (result.ok) {
-            console.log("삭제 성공");
-            getTodoListData();
-        } else {
-            console.log("삭제 실패");
-        }
-    };
+//         if (result.ok) {
+//             console.log("삭제 성공");
+//             getTodoListData();
+//         } else {
+//             console.log("삭제 실패");
+//         }
+//     };
 
-    // const submitItemHandler = async(id) => {
-    //     setIsSubmitting(true);
-    //     todoCtx.editItem(id);
-    // };
+//     const submitItemHandler = async (id) => {
+//         //     setIsSubmitting(true);
+//         //     todoCtx.editItem(id);
+//     };
 
-    // const removeItemHandler = (id) => {
-    // todoCtx.removeItem(id);
-    // await fetch('https://www.pre-onboarding-selection-task.shop/auth/signup', {
-    //     method: 'POST',
-    //     body
-    // })
-    // };
+//     const editCompo = (item) => (
+//         <>
+//             <input type="checkbox" />
+//             <input
+//                 data-testid="modify-input"
+//                 className={classes['form-control-sm']}
+//                 type="text"
+//                 onChange={modifyInputChangeHandler}
+//                 onBlur={modifyInputBlurHandler}
+//                 value={enteredModifyInput}
+//             />
+//             <BtnDiv>
+//                 <StyledButton data-testid="submit-button" onClick={submitItemHandler}>제출</StyledButton>
+//                 <StyledButton data-testid="cancel-button" onClick={() => toggleEditItemHandler(item)}>취소</StyledButton>
+//             </BtnDiv>
+//         </>
+//     );
 
+//     const addInputClasses = addInputHasError
+//         ? 'form-control invalid'
+//         : 'form-control';
 
-    // if (isLoading) {
-    //     return <p class="error-text" >Loading...</p>;
-    // }
+//     const showTodoList = () => {
+//         <div className={classes['todo-list']}>
+//             <ul>
+//                 {todoList.map((item) => (
+//                     <ul li key = { item.id } >
+//                         { isEdit? editCompo(item): (
+//                             <>
+//                                 <label>
+//                                     <input type = "checkbox" />
+//                                 </label>
+//                                 <BtnDiv>
+//                                     <StyledButton data-testid="modify-button" onClick={() => toggleEditItemHandler(item)}>수정</StyledButton>
+//                                     <StyledButton data-testid="delete-button" onClick={() => removeItemHandler(item.id)} >삭제</StyledButton>
+//                                 </BtnDiv>
+//                             </>
+//                         )}
+//                     </ul >
+//                 ))}
+//             </ul>
+//         </div >
+//     }
 
-    // if (httpError) {
-    //     return <p class="error-text" >{httpError}</p>;
-    // }
+//     return (
+//         <>
+//             <div className={`app ${classes['width-rem-35']}`}>
+//                 <h1>Todo</h1>
+//                 <div className={addInputClasses} style={{ display: 'flex', gap: '10px' }}>
+//                     <input
+//                         data-testid="new-todo-input"
+//                         style={{ flex: "1" }}
+//                         type='text'
+//                         onChange={addInputChangeHandler}
+//                         onBlur={addInputBlurHandler}
+//                         value={enteredAddInput}
+//                     />
+//                     <button
+//                         data-testid="new-todo-add-button"
+//                         className='btn-small btn-submit'
+//                         style={{ height: "fit-content" }}
+//                         onClick={addItemHandler}
+//                         disabled={!enteredAddInputIsValid}>추가</button>
+//                 </div>
+//                 {addInputHasError && <p class="error-text">할 일을 입력해주세요.</p>}
+//                 {!httpError && !isLoading && showTodoList}
+//                 {isLoading && !httpError && <p style={{ color: "black" }}>Loading...</p>}
+//                 {httpError && !isLoading && <p style={{ color: "red" }}>{httpError}</p>}
+//             </div>
+//         </>
+//     );
+// }
 
-    const showTodoList = <div className={classes['todo-list']}>
-        <ul>{todoList.map((item) => (
-            <li key={item.id}>
-                <label>
-                    <input type="checkbox" />
-                    <span>{item.todo}</span>
-                </label>
-                <div>
-                    <StyledButton data-testid="modify-button" onClick={editItemHandler}>수정</StyledButton>
-                    <StyledButton data-testid="delete-button" onClick={()=> removeItemHandler(item.id)} >삭제</StyledButton>
-                </div>
-                {/* 
-                <input data-testid="modify-input" />
-                <StyledButton data-testid="submit-button" onClick={submitItemHandler}>제출</StyledButton>
-                <StyledButton data-testid="cancel-button" onClick={submitItemHandler}>취소</StyledButton>
-            */}
-            </li>
-        ))}</ul>
-    </div>;
-    
-
-
-    return (
-        <>
-            <div className={`app ${classes['width-rem-35']}`}>
-                <h1>Todo</h1>
-                <div className='form-control' style={{ display: 'flex', gap: '10px' }}>
-                    <input data-testid="new-todo-input" className='form-control' style={{ flex: "1" }} ref={addTodoInput} />
-                    <button
-                        data-testid="new-todo-add-button"
-                        className='btn-small'
-                        style={{ height: "fit-content" }}
-                        onClick={addItemHandler}>추가</button>
-                </div>
-                {/* <p class="error-text">할 일을 입력해주세요.</p> */}
-                {isLoading && !httpError && <p style={{ color: "black" }}>Loading...</p>}
-                {httpError && !isLoading && <p style={{ color: "red" }}>{httpError}</p>}
-                {!httpError && !isLoading && showTodoList}
-            </div>
-        </>
-    );
-}
-
-export default Todo;
+// export default Todo;
