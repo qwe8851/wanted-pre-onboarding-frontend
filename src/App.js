@@ -6,7 +6,7 @@ import HomePage from './pages/Home'
 import ErrorPage from './pages/Error';
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
-// import Todo from './components/Todo';
+import Todo from './components/Todo';
 import TempTodo from "./components/TempTodo";
 
 const router = createBrowserRouter([
@@ -18,8 +18,8 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: '/signup', element: <SignUp /> },
       { path: '/signin', element: <SignIn /> },
-      // { path: '/todo', element: <Todo /> },
-      { path: '/todo', element: <TempTodo /> },
+      { path: '/todo', element: <Todo /> },
+      { path: '/temptodo', element: <TempTodo /> },
     ],
   },
 ]);
