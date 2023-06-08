@@ -1,31 +1,15 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import classes from './Todo.module.css';
-import styled from 'styled-components';
+import TodoItem from './TodoItem';
 import useInput from './hooks/use-input';
 
-const StyledButton = styled.button`
-    width: auto;
-    padding: 1px 10px;
-    font-size: small;
-`;
-
-const BtnDiv = styled.div`
-    width: 100px;
-    display: flex;
-    justify-content: space-between;
-    right: 5px;
-    top: 5px;
-    position: absolute;
-`;
+import classes from './Todo.module.css';
 
 const Todo = (props) => {
     const demo_access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlQG5hdmVyLmNvbSIsInN1YiI6OTIwLCJpYXQiOjE2ODU5NzI0OTEsImV4cCI6MTY4NjU3NzI5MX0.jmAN8DPxXvl_5KBHqeyFPr73wVDVR1CghFAUn7mh7rE';
     const [todoList, setTodoList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [modifyInputValue, setModifyInputValue] = useState('');
 
     const {
         value: enteredAddInput,
@@ -35,14 +19,6 @@ const Todo = (props) => {
         inputBlurHandler: addInputBlurHandler,
         reset: resetAddInputInput
     } = useInput(value => value.trim() !== '');
-
-    const {
-        value: enteredModifyInput,
-        isValid: enteredModifyInputIsValid,
-        hasError: modifyInputHasError,
-        valueChangeHandler: modifyInputChangeHandler,
-        inputBlurHandler: modifyInputBlurHandler,
-    } = useInput((value) => value.trim() !== '');
 
     const getTodoListData = async () => {
         const fetchTodoList = async () => {
@@ -100,11 +76,6 @@ const Todo = (props) => {
         }
     };
 
-    const toggleEditItemHandler = (item) => {
-        setIsEdit((prevState) => !prevState);
-        setModifyInputValue(item.todo);
-    };
-
     const removeItemHandler = async (id) => {
         const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
             method: 'DELETE',
@@ -115,64 +86,43 @@ const Todo = (props) => {
 
         if (result.ok) {
             console.log("삭제 성공");
+            props.submitItemHandler();
             getTodoListData();
         } else {
             console.log("삭제 실패");
         }
     };
 
-    const submitItemHandler = async (id) => {
-        //     setIsSubmitting(true);
-        //     todoCtx.editItem(id);
-    };
+    const submitItemHandler = async (id, modifyValue) => {
+        const result = await fetch('https://www.pre-onboarding-selection-task.shop/todos/' + id, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'bearer ' + demo_access_token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                todo: modifyValue,
+                isCompleted: true
+            })
+        })
 
-    const editCompo = (item) => (
-        <div style={{ position: "relative" }}>
-            <input type="checkbox" />
-            <input
-                data-testid="modify-input"
-                className={classes['form-control-sm']}
-                type="text"
-                onChange={modifyInputChangeHandler}
-                onBlur={modifyInputBlurHandler}
-                value={enteredModifyInput}
-            />
-            <BtnDiv>
-                <StyledButton data-testid="submit-button" onClick={submitItemHandler}>제출</StyledButton>
-                <StyledButton data-testid="cancel-button" onClick={() => toggleEditItemHandler(item)}>취소</StyledButton>
-            </BtnDiv>
-        </div>
-    );
+        if (result.ok) {
+            console.log("수정 성공");
+            getTodoListData();
+        } else {
+            console.log("수정 실패");
+        }
+    }
+
 
     const addInputClasses = addInputHasError
         ? 'form-control invalid'
         : 'form-control';
 
-    const showTodoList = (
-        <div className={classes['todo-list']}>
-            {todoList.map((item) => (
-                <ul key={item.id}>
-                    {isEdit ? editCompo(item) : (
-                        <li>
-                            <label>
-                                <input type="checkbox" />
-                                <span>{item.todo}</span>
-                            </label>
-                            <BtnDiv>
-                                <StyledButton data-testid="modify-button" onClick={() => toggleEditItemHandler(item)}>수정</StyledButton>
-                                <StyledButton data-testid="delete-button" onClick={() => removeItemHandler(item.id)} >삭제</StyledButton>
-                            </BtnDiv>
-                        </li>
-                    )}
-                </ul >
-            ))}
-        </div >
-    )
-
     return (
         <>
             <div className={`app ${classes['width-rem-35']}`}>
-                <h1>Todo</h1>
+                <h1>Todo-demo</h1>
                 <div className={addInputClasses} style={{ display: 'flex', gap: '10px' }}>
                     <input
                         data-testid="new-todo-input"
@@ -190,9 +140,17 @@ const Todo = (props) => {
                         disabled={!enteredAddInputIsValid}>추가</button>
                 </div>
                 {addInputHasError && <p class="error-text">할 일을 입력해주세요.</p>}
-                {!httpError && !isLoading && showTodoList}
                 {isLoading && !httpError && <p style={{ color: "black" }}>Loading...</p>}
                 {httpError && !isLoading && <p style={{ color: "red" }}>{httpError}</p>}
+                {!httpError && !isLoading &&
+                    <div className={classes['todo-list']}>
+                        {todoList.map((todoItem) => (
+                            <ul key={todoItem.id}>
+                                <TodoItem todoItem={todoItem} onRemove={removeItemHandler} onSubmit={submitItemHandler} />
+                            </ul>
+                        ))}
+                    </div>
+                }
             </div>
         </>
     );

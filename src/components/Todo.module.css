@@ -50,3 +50,19 @@ input[type="checkbox"]:checked {
     border-radius: 4px;
     color: black;
 }
+
+
+/* todo-item class */
+.btn-div{
+    width: 100px;
+    display: flex;
+    justify-content: space-between;
+    right: 5px;
+    top: 5px;
+}
+
+.btn-item{
+    width: auto;
+    padding: 1px 10px;
+    font-size: small;
+}

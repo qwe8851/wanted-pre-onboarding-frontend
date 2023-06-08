@@ -1,81 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import classes from './Todo.module.css';
 
-const StyledButton = styled.button`
-    width: auto;
-    padding: 1px 10px;
-    font-size: small;
-`;
-
-const BtnDiv = styled.div`
-    width: 100px;
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-`;
-
 const TodoItem = (props) => {
+    const modifyRef = useRef(null);
+
     const [isEdit, setIsEdit] = useState(false);
+    const [modifyValue, setModifyValue] = useState('');
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
-    const toggleEditItemHandler = (item) => {
+    useEffect(()=>{
+        setModifyValue(props.todoItem.todo);
+    }, [props.todoItem.todo]);
+
+    const toggleEditItemHandler = () => {;
         setIsEdit((prevState) => !prevState);
-
-        if(!isEdit){
-            console.log("item.id : ", item.id);
-        }
     };
 
-    const submitItemHandler = () => {
-        // props.onModify(props.item.id, inputValue);
-        // toggleEditItemHandler();
-    };
+    const modifyChangeHandler = (event) => {
+        const value = event.target.value;
 
-    // const inputChangeHandler = (event) => {
-    //     setInputValue(event.target.value);
-    // };
+        setModifyValue(value);
+        setIsSubmitDisabled(value.trim() === ''); // 비동기처리로 인해 이전 값(value) 사용
+    }
 
-    const editCompo = (item) => (
-        <li>
-            <div style={{ position: "relative" }}>
-                <input type="checkbox" />
-                <input
-                    data-testid="modify-input"
-                    className={classes['form-control-sm']}
-                    id={item.id}
-                    type="text"
-                    // value={initialInput}
-                />
-            </div>
-            <BtnDiv>
-                <StyledButton data-testid="submit-button" onClick={submitItemHandler}>제출</StyledButton>
-                <StyledButton data-testid="cancel-button" onClick={toggleEditItemHandler}>취소</StyledButton>
-            </BtnDiv>
-        </li>
-    );
+    const onSubmit = () => {
+        props.onSubmit(props.todoItem.id, modifyValue);
+        setIsEdit(false);
+    }
 
     return (
-        <div className={classes['todo-list']}>
-            {props.todoList.map((item) => (
-                <ul key={item.id}>
-                    {isEdit ? editCompo(item) : (
-                        <li>
-                            <label>
-                                <input type="checkbox" />
-                                <span>{item.todo}</span>
-                            </label>
-                            <BtnDiv>
-                                <StyledButton data-testid="modify-button" onClick={() => toggleEditItemHandler(item)}>수정</StyledButton>
-                                <StyledButton data-testid="delete-button" onClick={() => props.onRemove(item.id)} >삭제</StyledButton>
-                            </BtnDiv>
-                        </li>
-                    )}
-                </ul >
-            ))}
-        </div >
+        <ul key={props.todoItem.id}>
+            <li>
+                <label>
+                    <input type="checkbox" />
+                    {!isEdit
+                        ? <span>{props.todoItem.todo}</span>
+                        : <input
+                            data-testid="modify-input"
+                            className={classes['form-control-sm']}
+                            type="text"
+                            onChange={(event) => modifyChangeHandler(event)}
+                            value={modifyValue}
+                            // onChange={(event) => setModifyValue(event.target.value)}
+                            ref={modifyRef}
+                        />
+                    }
+                </label>
+                <div className={classes['btn-div']}>
+                    {!isEdit
+                        ? <>
+                            <button className={classes['btn-item']} data-testid="modify-button" onClick={() => toggleEditItemHandler(props.todoItem.todo)}>수정</button>
+                            <button className={classes['btn-item']} data-testid="delete-button" onClick={() => props.onRemove(props.todoItem.id)} >삭제</button>
+                        </>
+                        : <>
+                            <button 
+                                className={classes['btn-item']} 
+                                data-testid="submit-button" 
+                                onClick={onSubmit} 
+                                disabled={isSubmitDisabled}
+                            >제출</button>
+                            <button className={classes['btn-item']} data-testid="cancel-button" onClick={toggleEditItemHandler}>취소</button>
+                        </>
+                    }
+                </div>
+            </li>
+        </ul >
     );
 }
 
