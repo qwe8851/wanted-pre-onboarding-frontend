@@ -51,9 +51,8 @@ input[type="checkbox"]:checked {
     color: black;
 }
 
-
 /* todo-item class */
-.btn-div{
+.btn-div {
     width: 100px;
     display: flex;
     justify-content: space-between;
@@ -61,7 +60,7 @@ input[type="checkbox"]:checked {
     top: 5px;
 }
 
-.btn-item{
+.btn-item {
     width: auto;
     padding: 1px 10px;
     font-size: small;

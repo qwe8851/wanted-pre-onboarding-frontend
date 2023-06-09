@@ -7,11 +7,13 @@ const initialInputState = {
 
 const inputStateReducer = (state, action) => {
     if (action.type === 'INPUT') {
-        return { value: action.value, isTouched: state.isTouched, result: false };
+        return { value: action.value, isTouched: state.isTouched };
     }
+
     if (action.type === 'BLUR') {
-        return { value: state.value, isTouched: true, result: false };
+        return { value: state.value, isTouched: true };
     }
+
     if (action.type === 'RESET') {
         return initialInputState;
     }

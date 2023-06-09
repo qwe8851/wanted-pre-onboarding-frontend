@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useInput from './hooks/use-input';
 
 const SignUp = () => {
+    // 1. router이동을 위한 navigate 선언
+    const navigate = useNavigate();
+    
+    // 2. useInput으로 email, pw별 필요한 변수 및 함수 정의
     const {
         value: enteredEmail,
         isValid: enteredEmailIsValid,
@@ -12,7 +16,7 @@ const SignUp = () => {
         inputBlurHandler: emailBlurHandler,
         reset: resetEmailInput
     } = useInput(value => value.includes("@"));
-
+    
     const {
         value: enteredPw,
         isValid: enteredPwIsValid,
@@ -21,10 +25,13 @@ const SignUp = () => {
         inputBlurHandler: pwBlurHandler,
         reset: resetPwInput
     } = useInput(value => value.trim().length >= 8);
-
+    
+    // 3. 회원가입 버튼 disable을 위한 상수 생성
     const formIsValid = enteredEmailIsValid && enteredPwIsValid;
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const navigate = useNavigate();
+    // 4. 회원가입 
     const formSubmissionHandler = async (event) => {
         event.preventDefault();
 
@@ -39,8 +46,6 @@ const SignUp = () => {
             })
         });
 
-        console.log(result);
-
         if (result.ok){
             resetEmailInput();
             resetPwInput();
@@ -48,10 +53,24 @@ const SignUp = () => {
             alert("회원가입이 완료되었습니다!");
             navigate('/signin');
         }else{
-            alert("이미 가입된 이메일입니다.");
+            const errorMessage = await result.json();
+
+            setIsError(true);
+            setErrorMessage(errorMessage.message);
         }
     };
 
+    const emailInputChangeHandler = (event) => {
+        emailChangeHandler(event);
+        setIsError(false);
+    }
+    
+    const pwChangeInputHandler = (event) => {
+        pwChangeHandler(event);
+        setIsError(false);
+    }
+
+    // etc. 동적 class 바인딩
     const emailInputClasses = emailInputHasError
         ? 'form-control invalid'
         : 'form-control';
@@ -68,7 +87,7 @@ const SignUp = () => {
                     <input
                         data-testid="email-input"
                         type='email'
-                        onChange={emailChangeHandler}
+                        onChange={emailInputChangeHandler}
                         onBlur={emailBlurHandler}
                         value={enteredEmail}
                         placeholder='email'
@@ -79,15 +98,16 @@ const SignUp = () => {
                     <input
                         data-testid="password-input"
                         type='password'
-                        onChange={pwChangeHandler}
+                        onChange={pwChangeInputHandler}
                         onBlur={pwBlurHandler}
                         value={enteredPw}
                         placeholder='password'
                     />
                     {pwInputHasError && <p className='error-text'>비밀번호가 올바르지 않습니다.</p>}
                 </div>
+                {isError && <p className='error-text'>{errorMessage}</p>}
                 <div className="form-actions">
-                    <button data-testid="signup-button" disabled={!formIsValid} className='btn-submit'>회원가입</button>
+                    <button data-testid="signup-button" className='btn-submit' disabled={!formIsValid}>회원가입</button>
                 </div>
             </form>
         </div>

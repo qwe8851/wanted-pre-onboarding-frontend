@@ -4,8 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import useInput from './hooks/use-input';
 
 const SignIn = () => {
-    const [submitResult, setSubmitResult] = useState(false);
+    // 1. router이동을 위한 navigate 선언
+    const navigate = useNavigate();
 
+    // 2. submit 성공 여부와 에러메시지 state 선언 
+    const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(false);
+
+    // 3. useInput으로 email, pw별 필요한 변수 및 함수 정의
     const {
         value: enteredEmail,
         isValid: enteredEmailIsValid,
@@ -24,19 +30,21 @@ const SignIn = () => {
         reset: resetPwInput,
     } = useInput(value => value.trim().length >= 8);
 
+    // 4. 로그인버튼 disable을 위한 상수 생성
+    const formIsValid = enteredPwIsValid && enteredEmailIsValid;
+
+    // 5. email, pw 변경 시 useInput으로 event 전송 (useInput에서 처리)
     const emailInputChangeHandler = (event) => {
         emailChangeHandler(event);
-        setSubmitResult(false);
+        setIsSubmitSuccess(false);
     }
 
     const pwInputChangeHandler = (event) => {
         pwChangeHandler(event);
-        setSubmitResult(false);
+        setIsSubmitSuccess(false);
     }
 
-    const formIsValid = enteredPwIsValid && enteredEmailIsValid;
-
-    const navigate = useNavigate();
+    // 6. 로그인
     const formSubmissionHandler = async (event) => {
         event.preventDefault();
 
@@ -51,18 +59,27 @@ const SignIn = () => {
             })
         });
 
-        console.log(result);
-
         if (result.ok) {
+            // input 초기화
             resetPwInput();
             resetEmailInput();
+            
+            // 로컬스토리지에 토큰 저장
+            const responseData = await result.json();
+            window.localStorage.setItem("access_token", responseData.access_token);
 
             navigate('/todo');
         } else {
-            setSubmitResult(true);
+            const resultCode = await result.json();
+            result.status === 404 
+                ? setErrorMessage(resultCode.message)
+                : setErrorMessage("이메일과 패스워드를 확인해주세요.");
+            
+            setIsSubmitSuccess(true);
         }
     };
 
+    // etc. 동적 class 바인딩
     const pwInputClasses = pwInputHasError ? 'form-control invalid' : 'form-control';
     const emailInputClasses = emailInputHasError ? 'form-control invalid' : 'form-control';
 
@@ -92,10 +109,10 @@ const SignIn = () => {
                     />
                     {pwInputHasError && <p className='error-text'>비밀번호가 올바르지 않습니다.</p>}
                 </div>
-                {submitResult && <p className='error-text'>이메일과 패스워드를 확인해주세요.</p>}
+                {isSubmitSuccess && <p className='error-text'>{errorMessage}</p>}
                 <div className="form-actions">
                     <button data-testid="signin-button" disabled={!formIsValid} className='btn-submit'>로그인</button>
-                    <button className='btn-white'>회원가입</button>
+                    <button className='btn-white' onClick={() => navigate('/signup')}>회원가입</button>
                 </div>
             </form>
         </div>

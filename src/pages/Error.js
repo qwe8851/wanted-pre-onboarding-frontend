@@ -9,15 +9,13 @@ function ErrorPage() {
     }
 
     return (
-        <>
-            <main>
-                <h1>An error occurred!</h1>
-                <p>존재하지 않는 페이지 입니다.</p>
-                <p>
-                    <button className='btn-small' onClick={navigateHandler}>Go to Home</button>
-                </p>
-            </main>
-        </>
+        <main>
+            <h1>An error occurred!</h1>
+            <p>존재하지 않는 페이지 입니다.</p>
+            <p>
+                <button className='btn-small' onClick={navigateHandler}>Go to Home</button>
+            </p>
+        </main>
     );
 }
 
